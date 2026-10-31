@@ -4,6 +4,8 @@ Runway is a SwiftPM SwiftUI menu-bar app for macOS. It shows usage widgets for A
 
 AGENTS.md is the only place for agent instructions. CLAUDE.md contains `@AGENTS.md` and nothing else.
 
+This private repository contains Runway Studio and its MIT Runway base. Studio development lives in `Sources/RunwayStudioKit`, `Sources/RunwayStudio` and `Sources/RunwayStudioTools`; see `docs/studio.md`. Studio owns local polling; keep other tracker GUIs closed, preserve persisted cooldowns and never request administrator/App Management permission for tracking.
+
 Active development happens on `main`. The old Tauri edition is frozen on the `tauri-legacy` branch.
 
 ## Architecture

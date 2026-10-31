@@ -1,5 +1,7 @@
 # Claude
 
+The local Studio extension reuses this provider's native log parser for hourly activity and project/agent breakdowns. It retains recorded working directories and sidechain metadata through message deduplication. Studio token activity counts unpriced models and groups native logs across accounts; its scope differs from the account-specific, priced spend tiles described below. See [Studio](../studio.md).
+
 Tracks your Claude subscription limits using the login you already have from Claude Code or Claude Desktop.
 
 ## What it tracks
@@ -114,3 +116,7 @@ Rate Limit Resets follows the same rule for each reset. Resets whose deadline is
 Kept limits keep the time they were last fetched. The card's **Outdated** tag, the local API and CLI `fetchedAt`, and the iCloud snapshot all report that time, however many relaunches and rate limits happen in between.
 
 If this account is pinned and its login becomes unavailable, its menu-bar icon stays visible but faded, with no usage values, until a refresh confirms a usable login. See [Menu Bar](../menu-bar.md#login-unavailable).
+
+### Studio source attribution
+
+The local Studio index retains provenance before merging logs: native Claude Code and Cowork sandbox paths get distinct source labels. Custom paths and conflicting duplicate provenance remain unknown. Ordinary chat activity cannot be derived from these token records. Source metadata is optional for cache compatibility; Studio rebuilds its separate Claude cache at schema 3.

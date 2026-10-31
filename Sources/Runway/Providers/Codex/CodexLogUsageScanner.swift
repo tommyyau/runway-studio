@@ -82,6 +82,7 @@ actor CodexLogUsageScanner {
         var total: Int
         var isFast: Bool = false
         var isUltrafast: Bool = false
+        var activity: ActivityContext? = nil
     }
 
     /// Multi-account cards that resolve the same Codex homes share this actor and parse each rollout
@@ -224,6 +225,7 @@ actor CodexLogUsageScanner {
     /// blob) alongside the parse cache's byte offset so an appended tail resumes with the same
     /// model context, delta baseline, tier, and replay gate a whole-file parse would have reached.
     struct ParseState: Codable, Sendable, Equatable {
+        var activity: ActivityContext? = nil
         var previousTotals: RawUsage?
         var currentModel: String?
         var currentTierIsFast = false
@@ -300,6 +302,9 @@ actor CodexLogUsageScanner {
             let payload = object["payload"] as? [String: Any]
 
             if type == "turn_context" {
+                if state.replayGate == nil, let cwd = payload?["cwd"] as? String {
+                    state.activity?.cwd = cwd
+                }
                 if let model = payload.flatMap(modelName(in:)) {
                     state.currentModel = model
                 }
@@ -309,6 +314,7 @@ actor CodexLogUsageScanner {
             // session_meta lines right after its own.
             if type == "session_meta", !state.sawSessionMeta {
                 state.sawSessionMeta = true
+                state.activity = ActivityContext.codex(payload)
                 if let payload, isChildSessionMeta(payload) {
                     if let timestampRaw = (object["timestamp"] as? String)?.trimmingCharacters(in: .whitespaces),
                        let created = RunwayISO8601.date(from: timestampRaw) {
@@ -387,7 +393,8 @@ actor CodexLogUsageScanner {
                 reasoning: usage.reasoning,
                 total: usage.total,
                 isFast: state.currentTierIsFast,
-                isUltrafast: state.currentTierIsUltrafast
+                isUltrafast: state.currentTierIsUltrafast,
+                activity: state.activity
             ))
         }
         return events

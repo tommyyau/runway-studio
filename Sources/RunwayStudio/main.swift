@@ -1,0 +1,3 @@
+import RunwayStudioKit
+
+RunwayStudioApplication.run()

@@ -92,6 +92,12 @@ struct HeaderView: View {
     /// double-fire. Same split as the Quit ⌘Q item below.
     @ViewBuilder
     private var menuItems: some View {
+        Button {
+            NSWorkspace.shared.open(URL(fileURLWithPath: "/Applications/Runway Studio.app"))
+        } label: {
+            Label("Open Studio Dashboard", systemImage: "chart.xyaxis.line")
+        }
+
         Button { withAnimation(Motion.modeSwitch) { layout.screen = .customize } } label: {
             Label("Customize", systemImage: "slider.horizontal.3")
         }

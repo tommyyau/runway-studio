@@ -56,6 +56,9 @@ actor ClaudeLogUsageScanner {
         var costUSD: Double?
         /// `nil` when the line has no model or the placeholder `<synthetic>` (tokens count, cost is $0).
         var model: String?
+        var activity: ActivityContext? = nil
+        /// Studio-only source attribution derived from the log path, never from message content.
+        var source: String? = nil
     }
 
     /// Cards that read the same Claude home share one actor, so the first scan populates both the
@@ -135,6 +138,39 @@ actor ClaudeLogUsageScanner {
         let scan = Self.aggregate(entries: Self.dedup(output.items), since: since, pricing: pricing)
         lastAggregate = (output.revision, filesDigest, since, calendarKey, pricing, scan)
         return scan
+    }
+
+    /// Preserve the discovered file's provenance before combining parsed records.
+    func scanEvents(daysBack: Int = 30, now: Date = Date()) async -> [Entry]? {
+        let files = Self.usageFiles(under: claudeRoots())
+        let home = homeDirectory().resolvingSymlinksInPath()
+        let groups = Dictionary(grouping: files) { Self.activitySource(path: $0.path, home: home) ?? "Unknown Claude Source" }
+        var entries: [Entry] = []
+        for source in groups.keys.sorted() {
+            guard let output = await scanner.output(from: groups[source] ?? [],
+                since: JSONLScanning.sinceDate(daysBack: daysBack, now: now),
+                cacheIdentity: parseCacheIdentity() + ":studio-source:" + source,
+                tailParser: Self.tailParser), !Task.isCancelled else { return nil }
+            entries.append(contentsOf: output.items.map { item in
+                var item = item
+                item.source = source
+                return item
+            })
+        }
+        return Self.dedup(entries)
+    }
+
+    /// Only paths from known native roots justify a surface label. Custom roots can contain
+    /// copied or mixed records, and are deliberately left unattributed.
+    static func activitySource(path: String, home: URL) -> String? {
+        let file = URL(fileURLWithPath: path).standardizedFileURL.resolvingSymlinksInPath().path
+        let base = home.standardizedFileURL.resolvingSymlinksInPath()
+        let cowork = base.appendingPathComponent("Library/Application Support/Claude/local-agent-mode-sessions").path + "/"
+        if file.hasPrefix(cowork), file.contains("/.claude/projects/") { return "Claude Cowork" }
+        let codeRoots = [base.appendingPathComponent(".claude/projects").path + "/",
+                         base.appendingPathComponent(".config/claude/projects").path + "/"]
+        if codeRoots.contains(where: { file.hasPrefix($0) }) { return "Claude Code" }
+        return nil
     }
 
     /// Stable source configuration identity rather than the discovered root list: Cowork adds session
@@ -318,7 +354,11 @@ actor ClaudeLogUsageScanner {
             isSidechain: object["isSidechain"] as? Bool ?? false,
             hasSpeed: parsedUsage.hasSpeed,
             costUSD: (object["costUSD"] as? NSNumber)?.doubleValue,
-            model: model
+            model: model,
+            activity: ActivityContext(cwd: object["cwd"] as? String,
+                sessionID: object["sessionId"] as? String, agentID: object["agentId"] as? String,
+                role: (object["isSidechain"] as? Bool).map { $0 ? "Subagent" : "Main Session" }
+                    ?? ((object["agentId"] as? String) != nil ? "Subagent" : nil))
         )
 
         guard let iterations = usage["iterations"] as? [[String: Any]] else { return [parent] }
@@ -340,7 +380,8 @@ actor ClaudeLogUsageScanner {
                 isSidechain: parent.isSidechain,
                 hasSpeed: advisorUsage.hasSpeed,
                 costUSD: nil,
-                model: advisorModel
+                model: advisorModel,
+                activity: parent.activity
             ))
             advisorIndex += 1
         }
@@ -451,6 +492,8 @@ actor ClaudeLogUsageScanner {
             })
 
             if let index = collision {
+                let conflictingSource = entry.source != deduped[index].source &&
+                    (entry.source != nil || deduped[index].source != nil)
                 if shouldReplace(candidate: entry, existing: deduped[index]) {
                     let old = deduped[index]
                     if let oldID = old.messageID {
@@ -459,6 +502,7 @@ actor ClaudeLogUsageScanner {
                     deduped[index] = entry
                     exactIndex[key] = index
                 }
+                if conflictingSource { deduped[index].source = "Unknown Claude Source" }
                 continue
             }
 

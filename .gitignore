@@ -33,3 +33,13 @@ appcast.xml
 ios/build/
 ios/dd/
 xcuserdata/
+
+# Studio runtime data and local review captures (never source backup)
+/local-data/
+/review/
+/.studio-state/
+/polling-state.json
+/latest-state.json
+/alert-state.json
+/allowance-history.json
+/display-preferences.json

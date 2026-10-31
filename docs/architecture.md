@@ -1,5 +1,11 @@
 # Architecture
 
+## Local Studio extension
+
+`RunwayStudioKit` and the `RunwayStudio` executable provide a separate read-only native dashboard. Studio depends on the Runway module for `LocalActivityReader`, which reuses the incremental Claude/Codex log parsers without constructing credential readers or provider clients. `ActivityContext` retains project/session/agent metadata through parser caches and Codex tail resumes. Separate `studio-claude` and `studio-codex` cache namespaces isolate the richer records from older installed builds. Studio's activity index resolves Git worktrees and builds five-minute/hourly/daily category totals and project/agent/model/source breakdowns for one selected interval. The signed helper’s v9 cache supplies allowance/API-value history. Studio’s single polling coordinator owns availability, retries and provider errors; the original GUI stays closed. Studio's account-stamped allowance archive supplies observed glide paths. See [Studio](studio.md).
+
+Studio's app-owned monitoring task runs independently of window visibility. `StudioAlertEngine` is a pure, Codable evaluator; `StudioAlertCoordinator` persists its state and presents events through an in-app feed and UserNotifications. Delivery is acknowledged separately from generation so errors can retry. Daily scheduling uses a configured IANA time zone and persisted local-day keys. A kernel process lock enforces a single alert evaluator. No provider credential or reset-credit action is used by this path.
+
 A map of Runway's structure for people who work on the code. For what the app does, start with the [behavior docs](README.md).
 
 ## Layout
@@ -74,3 +80,21 @@ The release build (`script/release.sh`) is a universal binary (arm64 and x86_64)
 ## Local HTTP API
 
 A small loopback server exposes the current usage as JSON on `127.0.0.1:6736`. See [Local HTTP API](local-http-api.md).
+
+### Studio extensions
+
+Studio keeps observed weekly histories separated by account stamp and reset window, including historical navigation. Local event analysis supports exact selected intervals, five-minute bins, viewport zoom and PNG summaries. Known native Claude log paths identify Code or Cowork before flattening; custom/conflicting provenance remains unknown. A separate schema-3 Studio cache preserves this metadata without replacing the signed tracker's cache.
+
+`StudioServiceStatusMonitor` polls official public Claude/OpenAI summaries every five minutes through an ephemeral session without stored credentials or cookies. These vendor-wide statuses are separate from account allowances and alert recovery events. The app bundles the independent `runway-studio` executable: it reads Studio’s normalized heartbeat and native local history for statusline, bounded wait and read-only newline-delimited stdio MCP tools. Existing Studio state is authoritative; only installations without a Studio state file use the legacy cache/loopback fallback. Cached metrics and incomplete prices remain labelled. No MCP client registration occurs during installation.
+
+### Explicit Studio refresh
+
+Studio background cache reads remain passive. Automatic and explicit provider checks delegate to the installed signed Runway CLI helper, with family deduplication, persisted wait-policy checks, bounded output, timeout/cancellation and timestamp-based confirmation. It does not construct a second provider/auth engine. Confirmation is tied to the exact persisted reading timestamp, including delayed cache publication, and never overrides a provider wait or login-required state.
+
+### Single polling owner
+
+`StudioPollingCoordinator` serializes automatic and manual helper requests behind `polling.lock`, persists `StudioPollState` before every attempt and observes one schedule per provider family. Success schedules five minutes; failures use 15/30/60/120 minutes with any known provider minimum retained. Cached waits seed only once and expire, allowing automatic recovery. Competing tracker GUIs pause Studio before new requests. Snapshot publication and local activity run on a separate 30-second heartbeat; CLI/MCP consume `latest-state.json` without provider requests. Background and manual flows never open the old GUI. Studio’s helper registry terminates child requests synchronously on normal app shutdown.
+
+### Studio display preferences
+
+`StudioDisplayStore` persists local UI choices separately from alerts and polling. Dashboard, compact panel and status-item rendering observe these preferences. Menu account selection resolves one available card per family, with the existing default-account fallback. Display controls never change provider enablement or reset scheduler state. Refresh-health cards observe coordinator records and real cached timestamps without invoking checks.

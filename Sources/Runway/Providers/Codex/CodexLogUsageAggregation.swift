@@ -19,6 +19,15 @@ extension CodexLogUsageScanner {
         var isUltrafast: Bool
     }
 
+    static func deduplicatedEvents(_ events: [Event]) -> [Event] {
+        var seen: Set<EventKey> = []
+        return events.filter { event in
+            seen.insert(EventKey(timestamp: event.timestamp, model: event.model, pricingModel: event.pricingModel,
+                input: event.input, cached: event.cached, output: event.output,
+                reasoning: event.reasoning, total: event.total)).inserted
+        }
+    }
+
     private enum PricingResolution {
         case priced(model: String, context: EventPricingContext)
         case unpriced(model: String?)

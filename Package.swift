@@ -8,7 +8,9 @@ let package = Package(
     ],
     products: [
         .executable(name: "Runway", targets: ["RunwayApp"]),
-        .executable(name: "runway-cli", targets: ["RunwayCLI"])
+        .executable(name: "runway-cli", targets: ["RunwayCLI"]),
+        .executable(name: "RunwayStudio", targets: ["RunwayStudio"]),
+        .executable(name: "runway-studio", targets: ["RunwayStudioTools"])
     ],
     dependencies: [
         // The de-facto standard recorder + global hotkey for Mac apps (System Settings-style field).
@@ -18,6 +20,11 @@ let package = Package(
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.4")
     ],
     targets: [
+        .executableTarget(name: "RunwayStudioTools", dependencies: [], path: "Sources/RunwayStudioTools"),
+        .testTarget(name: "RunwayStudioToolsTests", dependencies: ["RunwayStudioTools"], path: "Tests/RunwayStudioToolsTests"),
+        .target(name: "RunwayStudioKit", dependencies: ["Runway"], path: "Sources/RunwayStudioKit"),
+        .executableTarget(name: "RunwayStudio", dependencies: ["RunwayStudioKit"], path: "Sources/RunwayStudio"),
+        .testTarget(name: "RunwayStudioTests", dependencies: ["RunwayStudioKit"], path: "Tests/RunwayStudioTests"),
         .target(
             name: "Runway",
             dependencies: [

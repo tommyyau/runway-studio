@@ -2,6 +2,14 @@
 
 What the app does and how it behaves. These pages describe behavior, not visuals. If the app and a page disagree, that is a bug.
 
+## Runway Studio
+
+- [Studio](studio.md): local setup, dashboard, alerts, polling and recovery
+- [Studio tools](studio-tools.md): statusline, wait and read-only MCP
+- [Feature comparison](agent-runway-comparison.md): implemented features, scope and provenance
+
+The sections below describe the original Runway base; Studio does not enable its iCloud or iOS features.
+
 ## The app
 
 - [Dashboard](dashboard.md): the popover, rows, toggles, reordering, keyboard shortcuts

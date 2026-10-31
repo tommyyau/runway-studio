@@ -1,5 +1,7 @@
 # Codex
 
+The local Studio extension reuses this provider's native log parser for hourly activity and project/agent breakdowns. Metadata survives append-only parsing; replayed parent headers do not replace a child's identity, and fork/stale-counter suppression remains shared. Studio counts unpriced models and groups native logs across accounts, separately from the account-specific spend tiles below. See [Studio](../studio.md).
+
 Tracks your ChatGPT/Codex subscription limits using the login from the Codex CLI.
 
 ## What it tracks

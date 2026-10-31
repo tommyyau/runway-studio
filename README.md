@@ -1,4 +1,27 @@
-# Runway
+# Runway Studio
+
+Private, laptop-local Claude and Codex usage tracking for macOS. Studio adds a rich menu bar snapshot, a dark dashboard, project/agent/model activity breakdowns, alerts, a 07:00 London morning report, saved display controls and refresh diagnostics.
+
+This repository contains the complete Studio source and its MIT Runway base. Studio is an independent implementation informed by observed product features; it contains no Agent Runway source or licence bypass. Existing licence and attribution files are retained.
+
+## Build and run
+
+Requires macOS 15 or newer, Xcode with Swift 6.2 or newer, and the signed Runway installation at `/Applications/Runway.app` for account setup and its refresh helper.
+
+```sh
+bash script/build_studio.sh
+open "dist/Runway Studio.app"
+```
+
+Keep Agent Runway and the original Runway GUI closed. Studio alone schedules usage checks through the signed helper. Its own code does not read provider credentials. Source backup does not include installed app bundles, account credentials, local usage logs or Studio's runtime state.
+
+```sh
+swift test -c release --filter 'RunwayStudioTests|RunwayStudioToolsTests'
+```
+
+Start with [Studio setup and behaviour](docs/studio.md), [CLI and MCP tools](docs/studio-tools.md), and the [feature comparison and provenance](docs/agent-runway-comparison.md). Studio focuses on this laptop; cross-device sync is outside the current scope. The remaining documents and source below also describe the original multi-provider Runway application.
+
+## Upstream Runway reference
 
 AI usage across every provider and account, in the macOS menu bar.
 
