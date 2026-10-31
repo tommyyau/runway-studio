@@ -104,7 +104,7 @@ jobs:
       # Imports the Developer ID cert into a temporary keychain and adds it to the search list (cleaned up
       # automatically in a post step). Replaces a hand-rolled `security create-keychain`/`import` block.
       - name: Import Developer ID certificate
-        uses: apple-actions/import-codesign-certs@5142e029c445c10ffc7149d172e540235a065466 # v7.0.0
+        uses: apple-actions/import-codesign-certs@77ba2a2a8f5cfc8c405ebf3159f767c323e238f9 # v7.1.0
         with:
           # Developer ID Application cert (.p12, base64) used to sign the app and DMG.
           p12-file-base64: ${{ secrets.DEVELOPER_ID_CERTIFICATE_BASE64 }}
