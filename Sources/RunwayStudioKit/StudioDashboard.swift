@@ -52,7 +52,7 @@ struct StudioDashboard: View {
                     }
                     if store.snapshots.isEmpty {
                         ContentUnavailableView("Waiting For Studio Data", systemImage: "antenna.radiowaves.left.and.right",
-                            description: Text("Connect your Claude and Codex accounts using Account Setup, then close that setup app to let Studio poll."))
+                            description: Text("Sign in through Claude Code or Codex on this Mac. Studio reads those sign-ins directly."))
                             .frame(maxWidth: .infinity, minHeight: 220)
                     }
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 380), spacing: 20, alignment: .top)], alignment: .leading, spacing: 20) {
@@ -115,7 +115,7 @@ struct StudioDashboard: View {
             Button { store.requestManualRefresh() } label: { Image(systemName: store.providerRefreshing ? "hourglass" : "arrow.clockwise") }
                 .buttonStyle(.borderless).disabled(store.loading || store.manualRefreshing || store.providerRefreshing)
                 .accessibilityLabel("Refresh Provider Readings")
-            Button("Runway Setup…") { store.openTracker() }.buttonStyle(.bordered)
+            Button("Accounts…") { store.openAccounts() }.buttonStyle(.bordered)
         }
         .padding(.horizontal, 30).padding(.vertical, 17)
         .background(StudioStyle.panel)

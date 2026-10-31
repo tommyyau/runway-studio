@@ -14,6 +14,7 @@ public enum RunwayStudioApplication {
 @MainActor private final class StudioAppDelegate: NSObject, NSApplicationDelegate {
     private var window: NSWindow?
     private var monitors: [String: NSPanel] = [:]
+    private var accountsWindow: NSWindow?
     private var alertWindow: NSWindow?
     private var menuController: StudioStatusItemController?
     private let processLock = StudioProcessLock()
@@ -35,6 +36,7 @@ public enum RunwayStudioApplication {
             }
         }
         StudioWindows.openMonitor = { [weak self] id in self?.showMonitor(id) }
+        StudioWindows.openAccounts = { [weak self] in self?.showAccounts() }
         StudioWindows.openAlerts = { [weak self] in self?.showAlerts() }
         let menu = NSMenu()
         let item = NSMenuItem(); menu.addItem(item)
@@ -134,6 +136,22 @@ public enum RunwayStudioApplication {
         window.contentView = NSHostingView(rootView: StudioDashboard(store: store))
         window.center()
         self.window = window
+    }
+
+    private func showAccounts() {
+        NSApp.setActivationPolicy(.regular)
+        if accountsWindow == nil {
+            let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 600, height: 620),
+                styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
+            panel.title = "Studio Accounts"
+            panel.isReleasedWhenClosed = false
+            panel.appearance = NSAppearance(named: .darkAqua)
+            panel.contentView = NSHostingView(rootView: StudioAccounts(store: store))
+            panel.center()
+            accountsWindow = panel
+        }
+        accountsWindow?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     private func showAlerts() {

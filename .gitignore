@@ -43,3 +43,5 @@ xcuserdata/
 /alert-state.json
 /allowance-history.json
 /display-preferences.json
+
+/provider-cache.json

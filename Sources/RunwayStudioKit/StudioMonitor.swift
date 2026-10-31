@@ -4,6 +4,7 @@ import SwiftUI
 
 @MainActor enum StudioWindows {
     static var openMonitor: ((String) -> Void)?
+    static var openAccounts: (() -> Void)?
     static var openAlerts: (() -> Void)?
 }
 

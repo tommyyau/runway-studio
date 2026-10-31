@@ -56,9 +56,9 @@ Previously missing finer activity zoom, historical allowance navigation, dedicat
 
 ## Build arrangement
 
-Runway Studio is a new executable in this repository. It reads the signed Runway app's cache and invokes its signed helper rather than requesting provider secrets itself. This keeps the working tracker installed while this Mac lacks a developer signing identity. It does not replace Agent Runway or alter its trial.
+Runway Studio is a new executable in this repository. It calls the bundled MIT provider engine directly and stores normalized readings in a private Studio cache. Its original helper dependency has been removed; existing Claude Code/Codex auth stores supply credentials. It does not replace Agent Runway or alter its trial.
 
-Studio now owns all automatic/manual usage polling through the installed signed command-line helper. Agent Runway and the original Runway GUI stay closed. A persisted per-family cooldown provides recovery without restarting the competing trackers. Studio records history while running, including with its window closed. Upstream automatic updates do not replace the separate Studio executable, but a future cache-schema change may require updating its adapter. See [Studio](studio.md) for data handling and build instructions.
+Studio owns all automatic/manual usage polling through its in-process provider engine. Agent Runway and the original Runway GUI stay closed. A persisted per-family cooldown provides recovery without restarting the competing trackers. Studio records history while running, including with its window closed. Upstream automatic updates do not replace the separate Studio executable, but a future cache-schema change may require updating its adapter. See [Studio](studio.md) for data handling and build instructions.
 
 ## Implementation provenance
 
@@ -68,4 +68,4 @@ This is an independent implementation informed by observed features. It was not 
 
 ## Remaining coverage limits
 
-Studio still depends on the installed signed Runway helper for authentication and allowance requests. Account setup remains in that app, which must be closed afterward. Chat/Desktop usage is not attributable from the supported logs. Cross-device/iCloud aggregation is outside the chosen laptop-only scope. Additional provider families and Pi/OpenCode native-event imports are not implemented in Studio. CLI/MCP tools are shipped but client registration is manual. These are distinct from the implemented local Claude/Codex feature set; the comparison does not claim complete product parity or an exhaustive audit of Agent Runway’s latest release.
+Studio has no original Runway app/helper dependency. Sign-ins are supplied by Claude Code and Codex; Keychain permission restrictions can still require connection attention. Chat/Desktop usage is not attributable from the supported logs. Cross-device/iCloud aggregation is outside the chosen laptop-only scope. Additional provider families and Pi/OpenCode native-event imports are not implemented in Studio. CLI/MCP tools are shipped but client registration is manual. These are distinct from the implemented local Claude/Codex feature set; the comparison does not claim complete product parity or an exhaustive audit of Agent Runway’s latest release.

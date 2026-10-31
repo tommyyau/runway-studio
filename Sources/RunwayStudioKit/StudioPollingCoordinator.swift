@@ -3,7 +3,7 @@ import Foundation
 import Observation
 import OSLog
 
-/// One process, one serialized helper, one persisted schedule for manual and automatic reads.
+/// One process, one serialized provider engine, one persisted schedule for manual and automatic reads.
 @MainActor @Observable final class StudioPollingCoordinator {
     private(set) var state = StudioPollState()
     private(set) var isPolling = false
@@ -49,18 +49,13 @@ import OSLog
     }
 
     static func savedSnapshots() throws -> [StudioSnapshot] {
-        let url = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Preferences/com.mattstallone.runway.plist")
-        let plist = try PropertyListSerialization.propertyList(from: Data(contentsOf: url), format: nil)
-        guard let dictionary = plist as? [String: Any], let data = dictionary["runway.providerSnapshots.v9"] as? Data else {
-            throw CocoaError(.fileReadCorruptFile)
-        }
-        return Array(try StudioCache.decode(data).snapshots.values)
+        Array(try StudioProviderCache.shared.read().snapshots.values)
     }
 
     func nextAttempt(family: String) -> Date? { state.nextAllowed(family: family) }
     func hasFailure(family: String) -> Bool { (state.records[family]?.consecutiveFailures ?? 0) > 0 }
 
-    /// CFPreferences can publish after the helper exits. Observe that success locally, without
+    /// Reconcile a late provider-cache publication locally, without
     /// another request and without inventing a new provider timestamp or extending its freshness.
     func reconcile(snapshots: [StudioSnapshot]) {
         guard active, !isPolling else { return }
@@ -120,7 +115,7 @@ import OSLog
             message = "Checking \(family.capitalized)…"
             let result = await client.refresh(providerID: family)
             var cached = (try? readCache()) ?? snapshots
-            // The helper writes through CFPreferences; allow its exact reading to become visible.
+            // Confirm publication of the exact engine-reported timestamp before declaring success.
             for _ in 0..<20 where !StudioRefreshPlan.cacheHasReportedReadings(cached, reported: result.fetchedAtByProvider) {
                 if Task.isCancelled { break }
                 try? await Task.sleep(for: .milliseconds(250))

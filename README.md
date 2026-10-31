@@ -6,14 +6,14 @@ This repository contains the complete Studio source and its MIT Runway base. Stu
 
 ## Build and run
 
-Requires macOS 15 or newer, Xcode with Swift 6.2 or newer, and the signed Runway installation at `/Applications/Runway.app` for account setup and its refresh helper.
+Requires macOS 15 or newer and Xcode with Swift 6.2 or newer. Sign in through Claude Code and Codex on this Mac; Studio reads those local credentials with its bundled MIT provider engine. No original Runway installation is required.
 
 ```sh
 bash script/build_studio.sh
 open "dist/Runway Studio.app"
 ```
 
-Keep Agent Runway and the original Runway GUI closed. Studio alone schedules usage checks through the signed helper. Its own code does not read provider credentials. Source backup does not include installed app bundles, account credentials, local usage logs or Studio's runtime state.
+Keep Agent Runway and the original Runway GUI closed. Studio alone schedules usage checks through its bundled provider engine. Background credential reads remain non-interactive. Source backup does not include installed app bundles, account credentials, local usage logs or Studio's runtime state.
 
 ```sh
 swift test -c release --filter 'RunwayStudioTests|RunwayStudioToolsTests'

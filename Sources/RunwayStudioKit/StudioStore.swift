@@ -4,6 +4,7 @@ import Observation
 
 @MainActor @Observable
 final class StudioStore {
+    let providerCache: StudioProviderCache
     let display: StudioDisplayStore
     var customizationPresented = false
     var snapshots: [StudioSnapshot] = []
@@ -40,9 +41,13 @@ final class StudioStore {
     init(directory: URL? = nil, alertsSuppressed: Bool = false) {
         let root = directory ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("RunwayStudio", isDirectory: true)
+        let cache = StudioProviderCache(directory: root)
+        providerCache = cache
         display = StudioDisplayStore(directory: root)
         archiveURL = root.appendingPathComponent("allowance-history.json")
-        polling = StudioPollingCoordinator(directory: root, suppressed: alertsSuppressed)
+        polling = StudioPollingCoordinator(directory: root, suppressed: alertsSuppressed,
+            client: StudioManualRefreshClient(runner: { arguments, timeout in try await cache.run(arguments, timeout: timeout) }),
+            readCache: { Array(try cache.read().snapshots.values) })
         alerts = StudioAlertCoordinator(directory: root, suppressed: alertsSuppressed)
         do {
             try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true,
@@ -67,24 +72,19 @@ final class StudioStore {
             polling.errors[snapshot.family].map { (snapshot.id, $0) }
         }, uniquingKeysWith: { _, last in last })
         do {
-            // Read the source app's persisted cache without touching credentials or changing its defaults.
-            let file = FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Preferences/com.mattstallone.runway.plist")
-            let plist = try PropertyListSerialization.propertyList(from: Data(contentsOf: file), format: nil)
-            guard let dictionary = plist as? [String: Any],
-                  let data = dictionary["runway.providerSnapshots.v9"] as? Data else {
-                throw StudioReadError.missingCache
-            }
-            let payload = try StudioCache.decode(data)
+            let payload = try providerCache.read()
             cacheReadable = true
             identities = payload.producedByIdentityKeys
-            let enabledIDs = (dictionary["runway.enabledProviders.v1"] as? [String]).map(Set.init)
-            snapshots = payload.snapshots.values.filter {
-                let family = $0.providerID.components(separatedBy: "@").first ?? $0.providerID
-                return ["claude", "codex"].contains(family) && (enabledIDs?.contains($0.providerID) ?? true)
+            snapshots = payload.snapshots.values.filter { ["claude", "codex"].contains($0.family)
             }.sorted {
                 if $0.family != $1.family { return $0.family == "claude" }
                 return $0.displayName < $1.displayName
+            }
+            if snapshots.isEmpty {
+                snapshots = ["claude", "codex"].map {
+                    StudioSnapshot(providerID: $0, displayName: $0.capitalized,
+                        refreshedAt: Date(timeIntervalSince1970: 0), lines: [])
+                }
             }
             polling.reconcile(snapshots: snapshots)
             connected = polling.active
@@ -109,7 +109,7 @@ final class StudioStore {
             }
         } catch {
             cacheReadable = false
-            self.error = "Runway's saved data is unavailable. Studio will retry provider checks when the saved cache is available. \(error.localizedDescription)"
+            self.error = "Studio’s provider cache is unavailable. The existing file has been preserved. \(error.localizedDescription)"
         }
         if includeActivity {
             Task { await refreshActivity() }
@@ -159,7 +159,7 @@ final class StudioStore {
             }
         }
     }
-    func stopMonitoring() { monitoring?.cancel(); monitoring = nil; manualTask?.cancel(); manualTask = nil; providerTask?.cancel(); providerTask = nil; StudioManualRefreshClient.cancelOutstanding() }
+    func stopMonitoring() { monitoring?.cancel(); monitoring = nil; manualTask?.cancel(); manualTask = nil; providerTask?.cancel(); providerTask = nil }
 
     func alertObservations() -> [StudioAlertObservation] {
         snapshots.compactMap { snapshot in
@@ -192,8 +192,8 @@ final class StudioStore {
             || polling.hasFailure(family: snapshot.family)
             || providerErrors[snapshot.id] != nil || snapshot.loginRequired == true || snapshot.waitsForProvider
     }
-    func openTracker() {
-        NSWorkspace.shared.open(URL(fileURLWithPath: "/Applications/Runway.app"))
+    func openAccounts() {
+        StudioWindows.openAccounts?()
     }
     func shareText(_ snapshot: StudioSnapshot) {
         guard let left = snapshot.weekly?.remaining else { return }

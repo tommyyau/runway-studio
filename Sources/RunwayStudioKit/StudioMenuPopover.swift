@@ -30,9 +30,9 @@ struct StudioMenuPopover: View {
                     if store.snapshots.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
                             Label("Waiting for provider readings", systemImage: "clock")
-                            Text("Open the Runway tracker to connect Claude and Codex. Then quit the setup app to let Studio poll.")
+                            Text("Sign in through Claude Code or Codex on this Mac, then let Studio check the connection.")
                                 .font(.caption).foregroundStyle(StudioStyle.muted)
-                            Button("Runway Setup…") { store.openTracker() }
+                            Button("Accounts…") { store.openAccounts() }
                         }.padding(16)
                     }
                     dashboardLink

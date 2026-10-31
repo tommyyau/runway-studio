@@ -53,18 +53,18 @@ func parseDate(_ value: String) -> Date? {
 func stamp(_ date: Date) -> String { ISO8601DateFormatter().string(from: date) }
 
 struct StudioReader {
-    var cacheURL: URL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Preferences/com.mattstallone.runway.plist")
+    var cacheURL: URL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/RunwayStudio/provider-cache.json")
     var studioURL: URL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/RunwayStudio/latest-state.json")
-    var fetch: () async throws -> Data = {
-        var request = URLRequest(url: URL(string: "http://127.0.0.1:6736/v1/limits")!, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 3)
-        request.httpMethod = "GET"
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
-        return data
-    }
+    /// Explicit legacy adapter for tests/importers; the shipped tool never probes another app.
+    var fetch: (() async throws -> Data)? = nil
+
     func read(now: Date = Date()) async -> Report {
         if FileManager.default.fileExists(atPath: studioURL.path) {
             return readStudio(now: now)
+        }
+        guard fetch != nil else {
+            return Report(connected: false, source: "studio_state_unavailable", observedAt: stamp(now), cards: [],
+                message: "Studio has not published a reading. Open Studio and allow it to refresh.")
         }
         return await readLegacy(now: now)
     }
@@ -116,11 +116,17 @@ struct StudioReader {
         }
     }
 
+    private static func cacheObject(_ data: Data) -> [String: Any]? {
+        if let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] { return object }
+        // Legacy fixtures and explicitly supplied migration files remain readable.
+        guard let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+              let blob = plist["runway.providerSnapshots.v9"] as? Data else { return nil }
+        return try? JSONSerialization.jsonObject(with: blob) as? [String: Any]
+    }
+
     private func cachedUsage(id: String) -> [Day]? {
         guard let data = try? Data(contentsOf: cacheURL),
-              let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-              let blob = plist["runway.providerSnapshots.v9"] as? Data,
-              let cache = try? JSONSerialization.jsonObject(with: blob) as? [String: Any],
+              let cache = Self.cacheObject(data),
               let snapshots = cache["snapshots"] as? [String: [String: Any]],
               let history = snapshots[id]?["usageHistory"] as? [String: Any],
               let series = history["series"] as? [String: Any], let rows = series["daily"] as? [[String: Any]] else { return nil }
@@ -138,7 +144,7 @@ struct StudioReader {
         var errors = Set<String>()
         var liveProviders: [String: [String: Any]] = [:]
         do {
-            let data = try await fetch()
+            let data = try await fetch!()
             guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                   let providers = object["providers"] as? [String: Any] else { throw URLError(.badServerResponse) }
             enabled = Set(providers.keys)
@@ -148,9 +154,7 @@ struct StudioReader {
             }
         } catch { /* Offline is represented in the report. */ }
         do {
-            let plist = try PropertyListSerialization.propertyList(from: Data(contentsOf: cacheURL), format: nil)
-            guard let dictionary = plist as? [String: Any], let data = dictionary["runway.providerSnapshots.v9"] as? Data,
-                  let cache = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+            guard let cache = Self.cacheObject(try Data(contentsOf: cacheURL)),
                   let snapshots = cache["snapshots"] as? [String: [String: Any]] else { throw URLError(.cannotDecodeContentData) }
             let cards = snapshots.values.compactMap { raw -> Card? in
                 guard let id = raw["providerID"] as? String, let name = raw["displayName"] as? String,

@@ -20,6 +20,30 @@ final class StudioToolsTests: XCTestCase {
         XCTAssertTrue(allowanceAvailable(report(cards: 2), provider: "codex@1", metric: "Session", now: now))
         XCTAssertNil(Meter(label: "Session", used: nil, limit: 10, resetsAt: nil).remainingPercent)
     }
+    func testMissingStudioHeartbeatDoesNotProbeOriginalTracker() async throws {
+        let absent = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let report = await StudioReader(cacheURL: absent, studioURL: absent).read(now: now)
+        XCTAssertFalse(report.connected)
+        XCTAssertEqual(report.source, "studio_state_unavailable")
+        XCTAssertTrue(report.cards.isEmpty)
+    }
+
+    func testLocalHistoryReadsStandaloneJSONCache() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let cacheURL = root.appendingPathComponent("provider-cache.json")
+        let stateURL = root.appendingPathComponent("latest-state.json")
+        let snapshot: [String: Any] = ["usageHistory": ["series": ["daily": [["date": "2026-10-31", "totalTokens": 42, "costUSD": 1]]]]]
+        try JSONSerialization.data(withJSONObject: ["snapshots": ["claude": snapshot]]).write(to: cacheURL)
+        let live: [String: Any] = ["connected": true, "observedAt": stamp(now), "errors": [], "nextAttempts": [:],
+            "providers": ["claude": ["displayName": "Claude", "fetchedAt": stamp(now), "stale": false, "resources": [:]]]]
+        try JSONSerialization.data(withJSONObject: live).write(to: stateURL)
+        let report = await StudioReader(cacheURL: cacheURL, studioURL: stateURL).read(now: now)
+        XCTAssertEqual(report.cards.first?.localUsage?.first?.totalTokens, 42)
+        XCTAssertEqual(report.source, "studio_state")
+    }
+
     func testMCPNegotiationAndProtocolErrors() throws {
         var server = MCPServer()
         func object(_ data: Data?) throws -> [String: Any] {

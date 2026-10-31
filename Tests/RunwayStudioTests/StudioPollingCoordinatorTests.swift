@@ -46,7 +46,7 @@ private actor PollCallCounter {
         let directory = root(); defer { try? FileManager.default.removeItem(at: directory) }
         let calls = PollCallCounter(), instant = now
         let client = StudioManualRefreshClient { _, _ in
-            await calls.increment(); throw StudioRefreshProcessError.launchFailed
+            await calls.increment(); throw URLError(.cannotConnectToHost)
         }
         var coordinator: StudioPollingCoordinator? = StudioPollingCoordinator(directory: directory, client: client,
             clock: { instant }, competitors: { [] })
@@ -62,7 +62,7 @@ private actor PollCallCounter {
     func testCompetingTrackerAndCorruptScheduleFailClosed() async throws {
         let directory = root(); defer { try? FileManager.default.removeItem(at: directory) }
         let calls = PollCallCounter(), instant = now
-        let client = StudioManualRefreshClient { _, _ in await calls.increment(); throw StudioRefreshProcessError.launchFailed }
+        let client = StudioManualRefreshClient { _, _ in await calls.increment(); throw URLError(.cannotConnectToHost) }
         var coordinator: StudioPollingCoordinator? = StudioPollingCoordinator(directory: directory, client: client,
             clock: { instant }, competitors: { ["Agent Runway"] })
         let text = await coordinator!.poll(snapshots: [card(at: now.addingTimeInterval(-600))])

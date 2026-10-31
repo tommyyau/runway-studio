@@ -3,19 +3,6 @@ import XCTest
 @testable import RunwayStudioKit
 
 final class StudioManualRefreshTests: XCTestCase {
-    func testShutdownTerminatesOnlyRegisteredHelperProcesses() throws {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/bin/sleep")
-        process.arguments = ["10"]
-        try process.run()
-        let registry = StudioActiveRefreshes()
-        registry.add(process)
-        registry.cancelAll()
-        process.waitUntilExit()
-        registry.remove(process)
-        XCTAssertFalse(process.isRunning)
-        XCTAssertEqual(process.terminationReason, .uncaughtSignal)
-    }
     func testRefreshPassesExactCardAndForceAndUsesReportedTimestamp() async {
         let output = Data(#"{"schema":"runway.limits.v1","providers":{"codex@abc":{"fetchedAt":"2026-01-01T12:30:00.000Z","resources":{}}},"errors":[]}"#.utf8)
         let client = StudioManualRefreshClient(runner: { args, timeout in
