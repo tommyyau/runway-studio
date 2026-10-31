@@ -29,7 +29,7 @@ Closing any Studio window keeps menu bar tracking running even when alerts are d
 
 The large gauge shows account-wide weekly allowance remaining. Session and model-specific limits are separate. Forecasts assume the average pace so far continues; they pause when the tracker is unreachable, a provider reports an error, or a reading is older than six minutes. A reset time passing reads **Awaiting Reset** until the provider confirms a new window.
 
-The glide path starts with actual observed readings. Its dashed diagonal is an even-pace reference, not a measured curve. A gap over 20 minutes breaks the observed line. Earlier windows show last-observed use; readings well before renewal only establish a lower bound. No past history is invented.
+The weekly allowance chart uses a shaded observed curve, daily guides, a labelled endpoint and a dashed even-pace reference. The glide path starts with actual observed readings. Its dashed diagonal is an even-pace reference, not a measured curve. A gap over 20 minutes breaks the observed line. Earlier windows show last-observed use; readings well before renewal only establish a lower bound. No past history is invented.
 
 Token activity defaults to the last **24H**, a rolling 24-hour window with hourly bars. **7D**, **14D** and **30D** cover local calendar days, including today. Each provider card can switch between **5 Minutes**, **Hourly** and **Daily**. Drag across the chart to select whole hours or days: totals, category counts and every breakdown use that same interval. **Clear Selection** returns to the full range. Daylight-saving transitions retain distinct absolute hours, including repeated local clock hours.
 
@@ -158,3 +158,13 @@ Source-backup verification: the combined Studio/tools/native-scanner regression 
 On 31 October 2026, the installed build refreshed Claude at 22:02:08 and Codex at 22:05:11 London time through the bundled engine, on their existing scheduled checks. Both readings were fresh with no errors; the original Runway cache retained its older timestamps. Only Studio was running, with no external Runway helper. The Accounts window opened inside Studio, and the read-only CLI returned `studio_state` plus daily history from the private cache. No new credential or administrator prompt appeared in this verification.
 
 The combined checks passed 196 tests: 95 provider-reader/scanner tests, 93 Studio tests and eight tool tests. This includes clean-install cache creation, one-time migration, retained account identity/timestamps, preserved corrupt files and tools operating without the original server. Installed ad-hoc signatures were verified. Different Keychain ACLs on another Mac may still require connection attention; the engine never forces an approval dialog during scheduled reads.
+
+## Importing existing allowance history
+
+On the first launch of the updated chart, Studio can copy user-owned allowance records from `~/Library/Application Support/AgentRunway/readings.json` into its own owner-only `imported-allowance-history.json`. It reads data only, never the other app’s code, credentials or entitlement files, and does not start that app. Once copied, the original file is no longer required.
+
+Imported source account IDs remain separate from Studio account identities. A provider with multiple imported accounts is not silently combined. The weekly graph overlays a unique imported account only for the matching reset window, with a visible provenance note; this is not proof that the two apps’ accounts match. **Include Imported** hides that layer. Studio’s own observations are brighter and continue recording normally. Alert evaluation and native account archives never consume the imported history. Historical navigation includes observed imported windows; no missing days are reconstructed.
+
+Imported reset estimates within two minutes are coalesced for weekly navigation because the source app rounds countdowns. Original sample timestamps and reset values are retained. Studio’s native archive keeps its tighter account/window separation.
+
+Weekly chart acceptance on 31 October 2026: 98 Studio tests passed, including five importer regressions. Native review confirmed both shaded weekly curves, daily guides, the latest-reading labels, and navigation to the previous Claude week and back. The one-time local archive contains 5,370 actual readings (3,488 Claude and 1,882 Codex). The installed signature was verified; user history remains outside the Git repository.

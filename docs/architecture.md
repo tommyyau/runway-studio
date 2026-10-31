@@ -98,3 +98,7 @@ Studio background cache reads remain passive. Automatic and explicit provider ch
 ### Studio display preferences
 
 `StudioDisplayStore` persists local UI choices separately from alerts and polling. Dashboard, compact panel and status-item rendering observe these preferences. Menu account selection resolves one available card per family, with the existing default-account fallback. Display controls never change provider enablement or reset scheduler state. Refresh-health cards observe coordinator records and real cached timestamps without invoking checks.
+
+### Imported allowance chart data
+
+`StudioImportedHistory` decodes bounded, user-owned historical allowance data into a separate private archive. It preserves source account identities and reference-date timestamps, validates percentage/window bounds, deduplicates recorded timestamps and fails visibly on invalid existing files. `StudioGlidePath` overlays imported and native segments as distinct series for matching reset windows; its charts never join across source identities or observation gaps. Imported data does not enter alert observations or the native account archive.

@@ -10,6 +10,8 @@ final class StudioStore {
     var snapshots: [StudioSnapshot] = []
     var identities: [String: String] = [:]
     var archive = StudioArchive()
+    var importedHistory = StudioImportedHistory()
+    var historyImportError: String?
     var connected = false
     var error: String?
     var providerErrors: [String: String] = [:]
@@ -54,6 +56,13 @@ final class StudioStore {
                                                    attributes: [.posixPermissions: 0o700])
             if FileManager.default.fileExists(atPath: archiveURL.path) {
                 archive = try JSONDecoder().decode(StudioArchive.self, from: Data(contentsOf: archiveURL))
+            }
+            do {
+                importedHistory = try StudioImportedHistory.load(directory: root,
+                    source: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/AgentRunway/readings.json"), now: Date())
+            } catch {
+                historyImportError = "Saved history could not be imported. Existing files are preserved. \(error.localizedDescription)"
+                NSLog("Runway Studio: %@", historyImportError!)
             }
         } catch {
             canSaveArchive = false

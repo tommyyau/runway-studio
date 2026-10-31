@@ -18,9 +18,9 @@ Reviewed on 31 October 2026:
 | Model-specific limits | Present | Visible alongside weekly allowance |
 | Remaining time and reset dates | Present | Both shown together |
 | Allowance pacing and forecast | Present | Explicit forecast labels and stale suppression |
-| Weekly glide path | Missing | Recorded curve plus even-pace reference added |
+| Weekly glide path | Missing | Shaded observed curve, daily guides and labelled latest point; optional imported local history overlay |
 | Earlier windows | Missing | Last observations retained; chart appears as history accumulates |
-| Historical week navigation | Missing | Previous/next observed account windows with their recorded glide paths; no fabricated earlier weeks |
+| Historical week navigation | Missing | Previous/next observed native or imported windows with their recorded curves; no fabricated earlier weeks |
 | Menu bar snapshot and rich panel | Present in tracker | Studio now shows provider marks, traffic-light allowance cells and percentages (cached values retain an amber indicator); click opens a Studio-coloured summary ring and compact allowance bars with expandable details; Customize opens the full dashboard |
 | Display customization | Tracker layout controls | Studio saves menu snapshot style/account, compact sections, dashboard status/health visibility and activity measure/range |
 | Refresh diagnostics | Generic errors | Studio shows actual reading freshness, recorded attempts, countdowns, failures and retry deadlines |
