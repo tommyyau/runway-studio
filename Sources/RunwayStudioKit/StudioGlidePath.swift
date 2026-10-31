@@ -6,6 +6,7 @@ struct StudioGlidePath: View {
     let store: StudioStore
     let accent: Color
     @Binding var selectedWindow: Date?
+    var compact = false
     @State private var includeImported = true
 
     var body: some View {
@@ -24,7 +25,7 @@ struct StudioGlidePath: View {
             let current = abs(shownReset.timeIntervalSince(reset)) < 2
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("WEEKLY ALLOWANCE").font(.system(size: 10, weight: .semibold)).tracking(1.3)
+                    Text(compact ? "WEEKLY TREND" : "WEEKLY ALLOWANCE").font(.system(size: 10, weight: .semibold)).tracking(1.3)
                     Spacer()
                     Button { selectedWindow = previous } label: { Image(systemName: "chevron.left") }
                         .disabled(previous == nil).buttonStyle(.borderless).accessibilityLabel("Previous Observed Window")
@@ -32,11 +33,13 @@ struct StudioGlidePath: View {
                         .font(.caption2).foregroundStyle(StudioStyle.muted)
                     Button { selectedWindow = next } label: { Image(systemName: "chevron.right") }
                         .disabled(next == nil).buttonStyle(.borderless).accessibilityLabel("Next Observed Window")
+                    if !compact {
                     StudioImageShareControl(image: StudioShareImage(title: "\(snapshot.displayName) · Allowance",
                         interval: "\(start.formatted(date: .abbreviated, time: .shortened)) – \(shownReset.formatted(date: .abbreviated, time: .shortened))",
                         value: points.last.map { "\(Int($0.remaining.rounded()))% Left At Last Reading" } ?? "No Recorded Reading",
                         note: "Observed provider allowance. Imported source accounts remain separate from Studio accounts; gaps are unobserved.",
                         bars: points.map { StudioShareBar(date: $0.date, value: $0.remaining) }, accent: accent))
+                    }
                 }
                 chart(native: native, imported: imported, start: start, reset: shownReset, current: current)
                 HStack(spacing: 6) {
@@ -49,7 +52,7 @@ struct StudioGlidePath: View {
                     }
                 }.font(.system(size: 10)).foregroundStyle(StudioStyle.muted)
                 if !imported.isEmpty {
-                    Text("Imported from Agent Runway · Account match not verified.")
+                    Text(compact ? "Imported Archive · Account Match Unverified" : "Imported from Agent Runway · Account match not verified.")
                         .font(.caption2).foregroundStyle(StudioStyle.muted)
                 } else {
                     Text(points.isEmpty ? "No readings recorded in this window." : "Recording since \(points[0].date.formatted(date: .abbreviated, time: .shortened)). Earlier periods are unobserved.")
@@ -113,7 +116,7 @@ struct StudioGlidePath: View {
                     .font(.system(size: 10, weight: .medium)).foregroundStyle(StudioStyle.muted)
             }
         }
-        .frame(height: 160)
+        .frame(height: compact ? 110 : 160)
     }
 
     private func windowDates(native: [StudioWindow], imported: [StudioWindow], current: Date) -> [Date] {

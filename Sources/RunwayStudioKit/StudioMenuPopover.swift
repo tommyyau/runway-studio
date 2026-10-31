@@ -94,6 +94,7 @@ private struct StudioMenuAllowance: View {
     let store: StudioStore
     @State private var expanded = false
     @State private var copied = false
+    @State private var selectedWindow: Date?
     private var accent: Color { StudioStyle.accent(snapshot) }
     private var stale: Bool { store.isStale(snapshot) }
 
@@ -109,7 +110,11 @@ private struct StudioMenuAllowance: View {
             }.padding(.horizontal, 4)
             VStack(alignment: .leading, spacing: 16) {
                 if let session = snapshot.session { limitRow(session) }
-                if let weekly = snapshot.weekly { limitRow(weekly) }
+                if let weekly = snapshot.weekly {
+                    limitRow(weekly)
+                    StudioGlidePath(snapshot: snapshot, store: store, accent: accent,
+                        selectedWindow: $selectedWindow, compact: true)
+                }
                 if store.display.preferences.showModelLimits {
                     ForEach(snapshot.modelLimits, id: \.label) { limitRow($0) }
                 }

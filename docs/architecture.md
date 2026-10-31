@@ -102,3 +102,5 @@ Studio background cache reads remain passive. Automatic and explicit provider ch
 ### Imported allowance chart data
 
 `StudioImportedHistory` decodes bounded, user-owned historical allowance data into a separate private archive. It preserves source account identities and reference-date timestamps, validates percentage/window bounds, deduplicates recorded timestamps and fails visibly on invalid existing files. `StudioGlidePath` overlays imported and native segments as distinct series for matching reset windows; its charts never join across source identities or observation gaps. Imported data does not enter alert observations or the native account archive.
+
+The menu-bar provider cards reuse `StudioGlidePath` in its compact mode. It uses the same native/imported archive, window navigation and freshness handling as the dashboard, with a shorter plot and no image-export menu. It does not initiate provider checks.

@@ -21,7 +21,7 @@ Reviewed on 31 October 2026:
 | Weekly glide path | Missing | Shaded observed curve, daily guides and labelled latest point; optional imported local history overlay |
 | Earlier windows | Missing | Last observations retained; chart appears as history accumulates |
 | Historical week navigation | Missing | Previous/next observed native or imported windows with their recorded curves; no fabricated earlier weeks |
-| Menu bar snapshot and rich panel | Present in tracker | Studio now shows provider marks, traffic-light allowance cells and percentages (cached values retain an amber indicator); click opens a Studio-coloured summary ring and compact allowance bars with expandable details; Customize opens the full dashboard |
+| Menu bar snapshot and rich panel | Present in tracker | Studio now shows provider marks, traffic-light allowance cells and percentages (cached values retain an amber indicator); click opens a Studio-coloured summary ring and compact allowance bars, shaded weekly curves and week navigation with expandable details; Customize opens the full dashboard |
 | Display customization | Tracker layout controls | Studio saves menu snapshot style/account, compact sections, dashboard status/health visibility and activity measure/range |
 | Refresh diagnostics | Generic errors | Studio shows actual reading freshness, recorded attempts, countdowns, failures and retry deadlines |
 | Persistent dashboard | Menu bar panel | Native resizable Studio window available as a secondary action |
