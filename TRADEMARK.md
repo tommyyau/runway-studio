@@ -1,13 +1,9 @@
-# Trademark Policy
+# Names and attribution
 
-## The Runway brand
+Runway Studio is a private derivative of [Runway by Matt Stallone](https://github.com/mstallone/runway), which is derived from [OpenUsage by Robin Ebers](https://github.com/robinebers/openusage). Studio uses its own interface and app icon. The upstream projects’ names and retained reference assets identify the code’s provenance; they do not imply that their authors endorse Studio.
 
-Runway is independently branded. It uses its own name, icon, and visual identity.
+The MIT licence covers the licensed source code, not permission to represent Studio as an official upstream release or claim ownership of another project’s brand. The OpenUsage name, logo and visual identity belong to Robin Ebers; the upstream trademark contact is [rob@robinebers.com](mailto:rob@robinebers.com).
 
-## Upstream brand
+[Agent Runway by Matt Maher](https://runway.metal-sole.com/) is a separate product used as a feature reference. Its proprietary assets and licence mechanism are not part of Studio.
 
-Runway is derived from the OpenUsage project. The "OpenUsage" name, logo, and visual identity are trademarks of Robin Ebers. The MIT license covers the upstream source code, not the upstream brand.
-
-Runway is not endorsed by, affiliated with, or part of the OpenUsage project.
-
-Questions about the OpenUsage brand go to [rob@robinebers.com](mailto:rob@robinebers.com).
+Claude, Codex, OpenAI and other provider names and marks identify their respective services. Studio is not affiliated with or endorsed by those providers. See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for the distinction between source lineage, Studio additions and inspiration.

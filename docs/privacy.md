@@ -1,5 +1,7 @@
 # Privacy
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Runway collects no product analytics or usage statistics. It has no analytics or crash-reporting service, creates no analytics identifier, and sends no app-use events, refresh summaries, error categories, or crash reports.
 
 On the first launch after upgrading from a version that included analytics, Runway deletes the retired analytics identifier and counters that version stored locally.

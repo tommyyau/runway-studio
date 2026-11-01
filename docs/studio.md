@@ -170,3 +170,9 @@ Imported reset estimates within two minutes are coalesced for weekly navigation 
 Weekly chart acceptance on 31 October 2026: 98 Studio tests passed, including five importer regressions. Native review confirmed both shaded weekly curves, daily guides, the latest-reading labels, and navigation to the previous Claude week and back. The one-time local archive contains 5,370 actual readings (3,488 Claude and 1,882 Codex). The installed signature was verified; user history remains outside the Git repository.
 
 Menu-bar weekly-chart acceptance: all 98 Studio tests passed. Native review confirmed the compact shaded graph, seven day labels, latest-reading marker and imported layer inside the dropdown. Previous-week navigation reached the recorded week ending 26 October and returned to This Week without opening the dashboard. The installed signature was verified.
+
+## Documentation images
+
+The README presents Studio’s interface and scope. Source lineage and product inspiration are recorded in [ACKNOWLEDGEMENTS.md](../ACKNOWLEDGEMENTS.md); the inherited Runway UI and release pages are labelled as upstream references.
+
+`bash script/render_studio_docs.sh` renders the real SwiftUI dashboard, dropdown and activity views using isolated synthetic data. It builds a separate development-only `studio-docs` executable, never starts provider monitoring, and does not import the user’s history or read credentials. Output goes to `assets/studio/`; the temporary preview store is removed afterward. The taller dropdown illustration reveals its scrollable content. Display preferences shown in examples may differ from the user’s saved layout. Do not substitute personal account/session screenshots for these assets.

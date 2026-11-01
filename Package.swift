@@ -10,6 +10,7 @@ let package = Package(
         .executable(name: "Runway", targets: ["RunwayApp"]),
         .executable(name: "runway-cli", targets: ["RunwayCLI"]),
         .executable(name: "RunwayStudio", targets: ["RunwayStudio"]),
+        .executable(name: "studio-docs", targets: ["StudioDocs"]),
         .executable(name: "runway-studio", targets: ["RunwayStudioTools"])
     ],
     dependencies: [
@@ -23,6 +24,7 @@ let package = Package(
         .executableTarget(name: "RunwayStudioTools", dependencies: [], path: "Sources/RunwayStudioTools"),
         .testTarget(name: "RunwayStudioToolsTests", dependencies: ["RunwayStudioTools"], path: "Tests/RunwayStudioToolsTests"),
         .target(name: "RunwayStudioKit", dependencies: ["Runway"], path: "Sources/RunwayStudioKit"),
+        .executableTarget(name: "StudioDocs", dependencies: ["RunwayStudioKit"], path: "Sources/StudioDocs"),
         .executableTarget(name: "RunwayStudio", dependencies: ["RunwayStudioKit"], path: "Sources/RunwayStudio"),
         .testTarget(name: "RunwayStudioTests", dependencies: ["RunwayStudioKit"], path: "Tests/RunwayStudioTests"),
         .target(

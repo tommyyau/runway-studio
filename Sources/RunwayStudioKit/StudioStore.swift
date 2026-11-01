@@ -40,7 +40,8 @@ final class StudioStore {
     private var cacheReadable = false
     private let archiveURL: URL
 
-    init(directory: URL? = nil, alertsSuppressed: Bool = false) {
+    init(directory: URL? = nil, alertsSuppressed: Bool = false,
+         historyImportSource: URL? = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/AgentRunway/readings.json")) {
         let root = directory ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("RunwayStudio", isDirectory: true)
         let cache = StudioProviderCache(directory: root)
@@ -58,8 +59,9 @@ final class StudioStore {
                 archive = try JSONDecoder().decode(StudioArchive.self, from: Data(contentsOf: archiveURL))
             }
             do {
-                importedHistory = try StudioImportedHistory.load(directory: root,
-                    source: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/AgentRunway/readings.json"), now: Date())
+                if let historyImportSource {
+                    importedHistory = try StudioImportedHistory.load(directory: root, source: historyImportSource, now: Date())
+                }
             } catch {
                 historyImportError = "Saved history could not be imported. Existing files are preserved. \(error.localizedDescription)"
                 NSLog("Runway Studio: %@", historyImportError!)
@@ -68,6 +70,14 @@ final class StudioStore {
             canSaveArchive = false
             self.error = "Allowance history could not be read. The existing file has been preserved. \(error.localizedDescription)"
         }
+    }
+
+    /// An isolated store for the documentation renderer. Never starts monitoring or reads user history.
+    static func documentationPreview(directory: URL) -> StudioStore {
+        let store = StudioStore(directory: directory, alertsSuppressed: true, historyImportSource: nil)
+        store.cacheReadable = true
+        store.connected = true
+        return store
     }
 
     func refresh(includeActivity: Bool = true) async {

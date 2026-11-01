@@ -1,5 +1,7 @@
 # Local HTTP API
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Runway exposes a read-only HTTP API on the loopback interface so other local apps can read the same usage data shown in the menu bar.
 
 **Base URL:** `http://127.0.0.1:6736`

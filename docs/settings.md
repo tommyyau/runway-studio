@@ -1,5 +1,7 @@
 # Settings
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Settings opens in its own window, separate from the popover. Open it from the popover footer's **gear** menu, with ⌘, while the popover is showing, or by right-clicking the menu bar icon and choosing Settings. Opening Settings closes the popover. Close the window with the red close button, Esc, ⌘W, or ⌘Q. ⌘Q closes only the Settings window. Runway keeps running in the menu bar. Quit it from the popover's gear menu or the menu bar icon's right-click menu.
 
 The window has four tabs: **General**, **Appearance**, **Notifications**, and **Advanced**. It remembers the tab you were on, its size, and its position. It only exists while it is open, so a closed Settings window uses no memory or CPU.

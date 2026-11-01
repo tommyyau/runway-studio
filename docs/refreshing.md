@@ -1,5 +1,7 @@
 # Refreshing & Caching
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 ## When data updates
 
 - All enabled providers refresh together: once at launch, then every 5 minutes. There is no setting for the interval. Opening the popover does not start another pass. Providers fetch in parallel, so fast cards update without waiting for a slow one. Results that land close together are published as one update. The batch finishes only after every provider returns. Pace notifications, history sync, and the next five-minute wait start after that.

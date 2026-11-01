@@ -1,8 +1,10 @@
-# Runway Documentation
+# Runway Studio Documentation
 
-What the app does and how it behaves. These pages describe behavior, not visuals. If the app and a page disagree, that is a bug.
+Start with the Studio guides below for the app built in this repository. The retained upstream pages describe the MIT Runway foundation and are not a claim that Studio exposes the original interface or all of its features.
 
 ## Runway Studio
+
+- [Acknowledgements](../ACKNOWLEDGEMENTS.md): source lineage, Studio additions and product inspiration
 
 - [Studio](studio.md): local setup, dashboard, alerts, polling and recovery
 - [Studio tools](studio-tools.md): statusline, wait and read-only MCP
@@ -10,7 +12,7 @@ What the app does and how it behaves. These pages describe behavior, not visuals
 
 The sections below describe the original Runway base; Studio does not enable its iCloud or iOS features.
 
-## The app
+## Inherited Runway reference
 
 - [Dashboard](dashboard.md): the popover, rows, toggles, reordering, keyboard shortcuts
 - [Menu bar](menu-bar.md): pinning metrics to the menu bar

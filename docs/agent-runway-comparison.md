@@ -1,6 +1,6 @@
 # Agent Runway feature comparison
 
-Agent Runway by Matt Maher and Runway by mstallone are different products. This local fork extends the MIT-licensed Runway source with Runway Studio, an original dark dashboard. Agent Runway's licence mechanism and proprietary assets remain untouched.
+Agent Runway by Matt Maher and Runway by mstallone are different products. This local fork extends the MIT-licensed Runway source with Runway Studio, an original dark dashboard. Agent Runway's licence mechanism and proprietary assets remain untouched. See [acknowledgements](../ACKNOWLEDGEMENTS.md) for the OpenUsage → Runway → Studio source lineage and the separate role of Matt Maher’s product inspiration.
 
 ## Evidence and versions
 

@@ -1,5 +1,7 @@
 # Updates
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Runway updates itself with [Sparkle](https://sparkle-project.org), the standard update framework for Mac apps. The app downloads updates from Runway's own release feed and verifies them before they install.
 
 ## How it works

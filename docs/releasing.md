@@ -1,5 +1,7 @@
 # Releasing
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Releases are automated. When you push a stable tag such as `v0.7.1` on `main`, the pipeline tests, builds, signs, notarizes, and publishes a new version with its SHA-256 checksum. Prerelease suffixes are rejected. The macOS pipeline is [.github/workflows/release.yml](../.github/workflows/release.yml), which calls the [iOS TestFlight pipeline](../.github/workflows/release-ios.yml) in parallel. The step-by-step is in the `release-swift` skill.
 
 Release tags are owner-managed. See [CONTRIBUTING.md](../CONTRIBUTING.md). Everything below is one-time setup for the maintainer's fork, not something contributors need.

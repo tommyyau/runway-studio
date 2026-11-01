@@ -10,7 +10,7 @@ A map of Runway's structure for people who work on the code. For what the app do
 
 ## Layout
 
-Runway is a SwiftPM package with one shared module and two thin executables. There is no Xcode project. The main executable is a menu-bar app: a SwiftUI interface hosted inside an AppKit status item and panel. The code is grouped by role:
+The inherited Runway base is a SwiftPM shared module with app and CLI executables. Studio adds `RunwayStudioKit`, the `RunwayStudio` app and `runway-studio` tools; `studio-docs` is a separate development-only image renderer. These macOS targets use SwiftPM rather than an Xcode project. The main executable is a menu-bar app: a SwiftUI interface hosted inside an AppKit status item and panel. The code is grouped by role:
 
 - `App/`: startup and the AppKit bridge (status item, panel, app entry point)
 - `Models/`: the value types the rest of the app uses (`MetricLine`, `WidgetData`, descriptors)

@@ -1,5 +1,7 @@
 # Command-Line Interface
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Runway ships a one-shot `runway` command for agents and scripts. It prints the [`/v1/limits`](local-http-api.md#get-v1limits) JSON and exits. It never launches or leaves the menu-bar app running. The output contains scalar limits and balances, not UI rows, colors, subtitles, charts, or spend-history tiles.
 
 ```sh

@@ -1,5 +1,7 @@
 # iCloud Sync
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 **Sync Across Macs** is on by default. You can turn it off in Settings. While it is on, each device keeps one record in Runway's private CloudKit database, part of your own iCloud account, and reads the records written by your other devices. Runway keeps a random device ID in its private Application Support data, so the same Mac keeps updating its existing record after you reset preferences or reinstall. There is no folder picker, pairing code, or separate account.
 
 Upgrades from either older Keychain-backed device-ID format copy the saved ID into the current file without reading a Keychain secret. If both that saved copy and the current file are missing, Settings pauses publishing and offers **Recover Identity**. That action may show a macOS Keychain approval dialog. Automatic sync never requests the legacy value.

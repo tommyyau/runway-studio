@@ -1,5 +1,7 @@
 # Dashboard
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 The popover that opens from the menu bar icon. Each provider is a card that shows the metrics you have enabled.
 
 ## First launch

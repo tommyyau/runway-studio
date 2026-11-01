@@ -1,5 +1,7 @@
 # iOS Companion App
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 RunwayMobile (in `ios/`) is a read-only iPhone and iPad viewer for the usage your Macs publish through [iCloud Sync](icloud-sync.md). It holds no provider credentials and never writes to iCloud. It fetches every device record from Runway's private CloudKit database and renders it.
 
 The dashboard shows:

@@ -13,6 +13,7 @@ cp "$BUILD_DIR/RunwayStudio" "$STUDIO_BUNDLE/Contents/MacOS/RunwayStudio"
 cp "$BUILD_DIR/runway-studio" "$STUDIO_BUNDLE/Contents/MacOS/runway-studio"
 codesign --force --sign - "$STUDIO_BUNDLE/Contents/MacOS/runway-studio"
 cp LICENSE "$STUDIO_BUNDLE/Contents/Resources/LICENSE"
+cp ACKNOWLEDGEMENTS.md "$STUDIO_BUNDLE/Contents/Resources/ACKNOWLEDGEMENTS.md"
 cp -R "$BUILD_DIR/Runway_Runway.bundle" "$STUDIO_BUNDLE/Contents/Resources/"
 bash "$ROOT_DIR/script/embed_sparkle.sh" "$STUDIO_BUNDLE" "$STUDIO_BUNDLE/Contents/MacOS/RunwayStudio" -
 ICON_DIR="$ROOT_DIR/dist/Studio.iconset"

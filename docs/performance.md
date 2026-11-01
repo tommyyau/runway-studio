@@ -1,5 +1,7 @@
 # Performance
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Runway forked from [OpenUsage](https://github.com/robinebers/openusage) and rebuilt its hot paths: incremental JSONL parsing, off-main launch discovery, coalesced refresh batches, a settled popover render path, and launch pre-warming. This page records what those changes are worth, measured head-to-head against the fork point.
 
 ## Results

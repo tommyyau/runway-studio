@@ -1,5 +1,7 @@
 # Changelog
 
+Studio development is recorded in this repository’s Git history and [Studio guide](docs/studio.md). The versioned entries below are inherited Runway release history, not Studio releases. Studio currently uses a local development build with no public release feed.
+
 ## v0.8.17
 
 ### New Features

@@ -29,7 +29,7 @@ final class StudioAlertCoordinator {
     private var requesting = false
     private var permissionRequestFailed = false
     private let suppressed: Bool
-    private let center = UNUserNotificationCenter.current()
+    private let center: UNUserNotificationCenter?
     private let delegate = StudioNotificationDelegate()
 
     private struct Saved: Codable {
@@ -40,8 +40,9 @@ final class StudioAlertCoordinator {
 
     init(directory: URL, suppressed: Bool = false) {
         self.suppressed = suppressed
+        center = suppressed ? nil : UNUserNotificationCenter.current()
         file = directory.appendingPathComponent("alert-state.json")
-        center.delegate = delegate
+        center?.delegate = delegate
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true,
                                                    attributes: [.posixPermissions: 0o700])
@@ -56,6 +57,7 @@ final class StudioAlertCoordinator {
     }
 
     func refreshPermission(request: Bool = false) async {
+        guard let center else { return }
         let settings = await center.notificationSettings()
         if settings.authorizationStatus == .notDetermined, request {
             guard !requesting else { return }
@@ -113,6 +115,7 @@ final class StudioAlertCoordinator {
     }
 
     func sendTest() async {
+        guard let center else { testStatus = "Notifications Are Disabled In This Preview."; return }
         await refreshPermission(request: true)
         guard permission == "Allowed" else { testStatus = "System notifications are not allowed. Enable them in macOS System Settings."; return }
         let event = StudioAlertEvent(id: "studio-test", account: "test", kind: .test,
@@ -129,6 +132,7 @@ final class StudioAlertCoordinator {
     }
 
     private func send(_ event: StudioAlertEvent) async throws {
+        guard let center else { return } // Suppressed previews never evaluate or send alerts.
         let content = UNMutableNotificationContent()
         content.title = event.title; content.body = event.body
         content.threadIdentifier = "runway-studio.\(event.account)"

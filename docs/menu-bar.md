@@ -1,5 +1,7 @@
 # Menu Bar
 
+> **Upstream Runway reference.** This page describes the original MIT Runway application. For Studio’s current interface, supported features and setup, see the [Studio guide](studio.md).
+
 Star your most important metrics into the menu bar strip.
 
 ## Right-clicking the icon
