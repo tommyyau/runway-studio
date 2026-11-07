@@ -135,7 +135,7 @@ jobs:
       # Apple Distribution cert (.p12, base64) used to sign the iOS app. The temporary keychain is
       # cleaned up automatically by the action's post step.
       - name: Import Apple Distribution certificate
-        uses: apple-actions/import-codesign-certs@5142e029c445c10ffc7149d172e540235a065466 # v7.0.0
+        uses: apple-actions/import-codesign-certs@288b8ec97b82c66b6f2a6baaf7acc8dfbcbe331c # v7.2.0
         with:
           p12-file-base64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }}
